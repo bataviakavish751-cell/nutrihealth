@@ -1,0 +1,33 @@
+# Virtual Environments (do not upload large venv folder)
+venv/
+env/
+ENV/
+myproject/venv/
+*/venv/
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django database
+db.sqlite3
+db.sqlite3-journal
+
+# Local Environment Variables & Secrets
+.env
+.env.*
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

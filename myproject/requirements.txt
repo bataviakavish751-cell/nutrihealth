@@ -1,0 +1,4 @@
+django>=5.0.0
+opencv-python>=4.8.0
+pyzbar>=0.1.9
+requests>=2.28.0

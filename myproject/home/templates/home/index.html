@@ -1,0 +1,3109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriHealth – Eat Smart. Live Better.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =====================================================
+           CSS VARIABLES - Color Palette (STRICT)
+        ===================================================== */
+        :root {
+            --primary-green: #2E7D32;
+            --light-green: #A5D6A7;
+            --accent-mint: #66BB6A;
+            --bg-white: #FFFFFF;
+            --soft-gray: #F5F5F5;
+            --text-dark: #1B1B1B;
+            --overlay-dark: rgba(27, 27, 27, 0.6);
+            --shadow-light: rgba(46, 125, 50, 0.15);
+            --shadow-medium: rgba(46, 125, 50, 0.25);
+        }
+
+        /* =====================================================
+           RESET & BASE STYLES
+        ===================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* =====================================================
+           HEADER STYLES
+        ===================================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--bg-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            height: 60px;
+            box-shadow: 0 4px 30px var(--shadow-medium);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-green);
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .hamburger:hover {
+            background: var(--light-green);
+            transform: scale(1.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent-mint);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-green);
+            color: var(--bg-white);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px var(--shadow-medium);
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: var(--bg-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-mint);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px var(--shadow-medium);
+        }
+
+        /* =====================================================
+           SIDEBAR STYLES
+        ===================================================== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-dark);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            z-index: 1001;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--bg-white);
+            z-index: 1002;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 5px 0 30px var(--shadow-medium);
+            padding-top: 80px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--light-green);
+        }
+
+        .sidebar-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .sidebar-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-green);
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .sidebar-close:hover {
+            background: var(--light-green);
+            transform: rotate(90deg);
+        }
+
+        .sidebar-menu {
+            padding: 20px;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.active .sidebar-menu li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(2) {
+            transition-delay: 0.15s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(4) {
+            transition-delay: 0.25s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(5) {
+            transition-delay: 0.3s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(6) {
+            transition-delay: 0.35s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(7) {
+            transition-delay: 0.4s;
+        }
+
+        .sidebar.active .sidebar-menu li:nth-child(8) {
+            transition-delay: 0.45s;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a:hover {
+            background: var(--light-green);
+            transform: translateX(10px);
+            color: var(--primary-green);
+        }
+
+        /* =====================================================
+           HERO SECTION
+        ===================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 30px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-white) 0%, var(--soft-gray) 100%);
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 2.5rem;
+            color: var(--light-green);
+            opacity: 0.4;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 25%;
+            right: 15%;
+            animation-delay: 1s;
+            font-size: 2rem;
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 30%;
+            left: 5%;
+            animation-delay: 2s;
+        }
+
+        .floating-icon:nth-child(4) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 1.5s;
+            font-size: 3rem;
+        }
+
+        .floating-icon:nth-child(5) {
+            top: 50%;
+            left: 20%;
+            animation-delay: 0.5s;
+            font-size: 1.8rem;
+        }
+
+        .floating-icon:nth-child(6) {
+            top: 70%;
+            right: 25%;
+            animation-delay: 2.5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            z-index: 1;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary-green);
+            position: relative;
+        }
+
+        .hero-content h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: var(--light-green);
+            z-index: -1;
+            transform: skewX(-5deg);
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            opacity: 0.8;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-hero {
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: var(--primary-green);
+            color: var(--bg-white);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-hero:hover {
+            background: var(--accent-mint);
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px var(--shadow-medium);
+        }
+
+        .btn-hero i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-hero:hover i {
+            transform: translateX(5px);
+        }
+
+/* Overlay */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    display: none;
+    z-index: 9999;
+}
+
+.modal-overlay.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Box */
+.modal-box {
+    background: var(--bg-white);
+    padding: 32px;
+    border-radius: 18px;
+    width: 420px;
+    max-width: 90%;
+    box-shadow: 0 20px 60px var(--shadow-medium);
+    animation: popupFade 0.35s ease;
+}
+
+/* Title */
+.modal-box h2 {
+    text-align: center;
+    color: var(--primary-green);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Inputs */
+.modal-box input {
+    width: 100%;
+    padding: 12px 14px;
+    margin: 8px 0 18px;
+    border-radius: 10px;
+    border: 1px solid #e1e1e1;
+    font-size: 14px;
+    transition: 0.25s;
+}
+
+.modal-box input:focus {
+    border-color: var(--primary-green);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.15);
+}
+
+/* Submit Button */
+.modal-box button {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-green);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.modal-box button:hover {
+    background: var(--accent-mint);
+    transform: translateY(-1px);
+}
+
+/* Close Button */
+.close-btn {
+    float: right;
+    font-size: 22px;
+    cursor: pointer;
+    color: #777;
+    transition: 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--primary-green);
+}
+
+/* Animation */
+@keyframes popupFade {
+    from {
+        transform: translateY(30px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+
+        /* NGO GRID */
+        .ngo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* NGO CARD */
+        .ngo-card {
+            background: var(--bg-white);
+            border-radius: 18px;
+            padding: 20px;
+            /* reduced from 40px */
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .ngo-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 40px var(--shadow-medium);
+        }
+
+
+        .ngo-icon {
+            width: 55px;
+            height: 55px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+
+        .ngo-icon i {
+            font-size: 1.3rem;
+            color: var(--primary-green);
+        }
+
+
+        .ngo-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .ngo-card button {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .ngo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 5px;
+            width: 100%;
+            background: var(--primary-green);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .ngo-card:hover::before {
+            transform: scaleX(1);
+        }
+
+
+
+        /* =====================================================
+           SECTIONS BASE STYLES
+        ===================================================== */
+        .section {
+            padding: 100px 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-alt {
+            background: var(--soft-gray);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--primary-green);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--text-dark);
+            opacity: 0.7;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* =====================================================
+           KNOW YOURSELF SECTION
+        ===================================================== */
+        .know-card {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 10px 50px var(--shadow-light);
+            transition: all 0.4s ease;
+        }
+
+        .know-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px var(--shadow-medium);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: var(--primary-green);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--light-green);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--bg-white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px var(--shadow-light);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--light-green);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-white);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232E7D32'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 24px;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px var(--shadow-light);
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* =====================================================
+           SCAN SECTION
+        ===================================================== */
+        .scan-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .scan-input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .scan-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 18px 25px;
+            border: 2px solid var(--light-green);
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .scan-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px var(--shadow-light);
+        }
+
+        .btn-scan {
+            padding: 18px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scan-result {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 50px var(--shadow-light);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .scan-result.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scan-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .product-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .product-info p {
+            color: var(--primary-green);
+            font-weight: 500;
+        }
+
+        .nutri-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 25px;
+            background: var(--light-green);
+            border-radius: 16px;
+        }
+
+        .nutri-score span {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .nutri-score strong {
+            font-size: 2rem;
+            color: var(--primary-green);
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .nutrition-item {
+            background: var(--soft-gray);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .nutrition-item:hover {
+            transform: translateY(-5px);
+            background: var(--light-green);
+        }
+
+        .nutrition-item i {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .nutrition-item h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .nutrition-item p {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            opacity: 0.7;
+        }
+
+        .scan-loading {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .scan-loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--light-green);
+            border-top-color: var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .scan-loading p {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .camera-preview {
+            background: var(--soft-gray);
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 30px;
+            border: 3px dashed var(--light-green);
+            transition: all 0.3s ease;
+        }
+
+        .camera-preview:hover {
+            border-color: var(--primary-green);
+            background: var(--bg-white);
+        }
+
+        .camera-preview i {
+            font-size: 4rem;
+            color: var(--light-green);
+            margin-bottom: 15px;
+        }
+
+        .camera-preview p {
+            color: var(--text-dark);
+            opacity: 0.6;
+        }
+
+        /* =====================================================
+           DIET SECTION
+        ===================================================== */
+        .diet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .diet-card {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-light);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-green);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .diet-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .diet-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px var(--shadow-medium);
+        }
+
+        .diet-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            transition: all 0.4s ease;
+        }
+
+        .diet-card:hover .diet-icon {
+            background: var(--primary-green);
+            transform: scale(1.1);
+        }
+
+        .diet-icon i {
+            font-size: 2rem;
+            color: var(--primary-green);
+            transition: all 0.4s ease;
+        }
+
+        .diet-card:hover .diet-icon i {
+            color: var(--bg-white);
+        }
+
+        .diet-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .diet-card p {
+            color: var(--text-dark);
+            opacity: 0.7;
+            font-size: 0.95rem;
+        }
+
+        .diet-note {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: var(--light-green);
+            border-radius: 16px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .diet-note i {
+            font-size: 2rem;
+            color: var(--primary-green);
+            margin-bottom: 15px;
+        }
+
+        .diet-note p {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* =====================================================
+   ALTERNATIVES SECTION
+===================================================== */
+
+        .alternatives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .alternative-card {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-light);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alternative-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-green);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .alternative-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .alternative-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px var(--shadow-medium);
+        }
+
+        .alternative-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            transition: all 0.4s ease;
+        }
+
+        .alternative-card:hover .alternative-icon {
+            background: var(--primary-green);
+            transform: scale(1.1);
+        }
+
+        .alternative-icon i {
+            font-size: 1.8rem;
+            color: var(--primary-green);
+            transition: all 0.4s ease;
+        }
+
+        .alternative-card:hover .alternative-icon i {
+            color: var(--bg-white);
+        }
+
+        .alternative-card h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .alternative-card p {
+            color: var(--text-dark);
+            opacity: 0.75;
+            font-size: 0.9rem;
+        }
+
+        /* =====================================================
+           DONATE SECTION
+        ===================================================== */
+        .donate-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .donate-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .donate-icon i {
+            font-size: 3rem;
+            color: var(--primary-green);
+        }
+
+        .donate-content h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .donate-content p {
+            color: var(--text-dark);
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .btn-donate {
+            padding: 18px 50px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            background: var(--primary-green);
+            color: var(--bg-white);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .btn-donate:hover {
+            background: var(--accent-mint);
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px var(--shadow-medium);
+        }
+
+        .btn-donate i {
+            margin-right: 10px;
+        }
+
+        /* =====================================================
+           PROFILE SECTION
+        ===================================================== */
+        .profile-card {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 10px 50px var(--shadow-light);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            transition: all 0.4s ease;
+        }
+
+        .profile-card:hover .profile-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px var(--shadow-medium);
+        }
+
+        .profile-avatar i {
+            font-size: 3.5rem;
+            color: var(--primary-green);
+        }
+
+        .profile-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .profile-info .email {
+            color: var(--primary-green);
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        .health-summary {
+            background: var(--soft-gray);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .health-summary h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .health-summary ul {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .health-summary li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark);
+        }
+
+        .health-summary li i {
+            color: var(--accent-mint);
+            width: 20px;
+        }
+
+        .btn-edit {
+            padding: 14px 35px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* =====================================================
+           MODAL STYLES
+        ===================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 450px;
+            width: 100%;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-dark);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            color: var(--text-dark);
+            opacity: 0.7;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--light-green);
+            border-radius: 12px;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .modal-tab.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: var(--bg-white);
+        }
+
+        .modal-tab:hover:not(.active) {
+            background: var(--light-green);
+        }
+
+        .modal-form {
+            display: none;
+        }
+
+        .modal-form.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .form-error {
+            color: #d32f2f;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-input.error {
+            border-color: #d32f2f;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+        .footer {
+            background: var(--text-dark);
+            color: var(--bg-white);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--light-green);
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-mint);
+        }
+
+        /* =====================================================
+           RESPONSIVE STYLES
+        ===================================================== */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 20px;
+            }
+
+            .header-right {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .btn-hero {
+                padding: 14px 30px;
+                font-size: 1rem;
+            }
+
+            .section {
+                padding: 60px 20px;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .know-card,
+            .profile-card {
+                padding: 30px;
+            }
+
+            .scan-input-group {
+                flex-direction: column;
+            }
+
+            .btn-scan {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .scan-result {
+                padding: 25px;
+            }
+
+            .product-info h3 {
+                font-size: 1.4rem;
+            }
+
+            .diet-grid,
+            .alternatives-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .alternative-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .arrow-container {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+
+            .modal {
+                padding: 30px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .floating-icon {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right .btn-outline {
+                display: none;
+            }
+
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nutrition-item {
+                padding: 15px;
+            }
+
+            .nutrition-item h4 {
+                font-size: 1.2rem;
+            }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 🔑 Allow clicks inside modal */
+        .modal {
+            position: relative;
+            z-index: 1001;
+            pointer-events: auto;
+        }
+
+        /* 🔑 Prevent overlay from blocking clicks */
+        .modal-overlay {
+            pointer-events: auto;
+        }
+
+        /* Warning box for risky food */
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 6px solid #ff9800;
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px var(--shadow-light);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .warning-box strong {
+            color: #e65100;
+            font-size: 1rem;
+        }
+
+        .warning-box p {
+            margin: 8px 0 0;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        /* smooth appearance */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+    <header class="header" data-testid="header">
+        <div class="header-left">
+            <div class="hamburger" data-testid="hamburger-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo">Nutri<span>Health</span></div>
+        </div>
+        <div class="header-right">
+            {% if user.is_authenticated %}
+            <span class="welcome">Hi, {{ user.username }}</span>
+            <a href="/accounts/logout/" class="btn btn-outline">Logout</a>
+            {% else %}
+            <button class="btn btn-outline" data-testid="login-btn" onclick="openModal('login')">Login</button>
+            <button class="btn btn-primary" data-testid="signup-btn" onclick="openModal('signup')">Sign Up</button>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
+    <div class="sidebar-overlay" data-testid="sidebar-overlay" onclick="closeSidebar()"></div>
+    <nav class="sidebar" data-testid="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">NutriHealth</div>
+            <div class="sidebar-close" data-testid="sidebar-close" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#hero" onclick="closeSidebar()"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#know-yourself" onclick="closeSidebar()"><i class="fas fa-user-circle"></i> Know Yourself</a>
+            </li>
+            <li><a href="#scan" onclick="closeSidebar()"><i class="fas fa-barcode"></i> Scan</a></li>
+            <li><a href="#diet" onclick="closeSidebar()"><i class="fas fa-utensils"></i> Diet</a></li>
+            <li><a href="#alternatives" onclick="closeSidebar()"><i class="fas fa-exchange-alt"></i> Alternatives</a>
+            </li>
+            <li><a href="#donate" onclick="closeSidebar()"><i class="fas fa-hand-holding-heart"></i> Donate</a></li>
+            <li><a href="#profile" onclick="closeSidebar()"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- =====================================================
+         HERO SECTION
+    ===================================================== -->
+    <section class="hero" id="hero" data-testid="hero-section">
+        <div class="hero-bg">
+            <i class="fas fa-apple-alt floating-icon"></i>
+            <i class="fas fa-carrot floating-icon"></i>
+            <i class="fas fa-lemon floating-icon"></i>
+            <i class="fas fa-leaf floating-icon"></i>
+            <i class="fas fa-seedling floating-icon"></i>
+            <i class="fas fa-pepper-hot floating-icon"></i>
+        </div>
+        <div class="hero-content">
+            <h1><span>NutriHealth</span> – Eat Smart. Live Better.</h1>
+            <p>AI-powered nutrition guidance based on your health profile. Scan products, get personalized diets, and
+                discover healthier alternatives.</p>
+            <button class="btn-hero" data-testid="get-started-btn" onclick="scrollToSection('know-yourself')">
+                Get Started <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         KNOW YOURSELF SECTION
+    ===================================================== -->
+    <section class="section section-alt" id="know-yourself" data-testid="know-yourself-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Know Yourself</h2>
+                <p>Tell us about your health to get personalized recommendations</p>
+            </div>
+            <div class="know-card">
+                <div class="form-group">
+                    <label><i class="fas fa-heartbeat"></i> Health Condition / Disease</label>
+                    <input type="text" class="form-input" data-testid="health-condition-input"
+                        placeholder="e.g., Diabetes, Hypertension, None" id="healthCondition">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-allergies"></i> Allergies</label>
+                    <input type="text" class="form-input" data-testid="allergies-input"
+                        placeholder="e.g., Nuts, Gluten, Lactose, None" id="allergies">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-leaf"></i> Diet Preference</label>
+                    <select class="form-select" data-testid="diet-preference-select" id="dietPreference">
+                        <option value="">Select your preference</option>
+                        <option value="veg">Vegetarian</option>
+                        <option value="nonveg">Non-Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-save" data-testid="save-profile-btn" onclick="saveHealthProfile()">
+                    <i class="fas fa-save"></i> Save Profile
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+     SCAN SECTION
+===================================================== -->
+    <section class="section" id="scan" data-testid="scan-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Scan Products</h2>
+                <p>Enter a barcode number or use Django backend camera to scan</p>
+            </div>
+            <div class="scan-container">
+                <!-- Manual Barcode Input -->
+                <div class="scan-input-group">
+                    <input type="text" class="scan-input" data-testid="barcode-input"
+                        placeholder="Enter barcode number or QR text (e.g. 5449000000996)" id="barcodeInput">
+                    <button class="btn btn-primary btn-scan" data-testid="scan-btn" onclick="scanProduct()">
+                        <i class="fas fa-search"></i> Scan
+                    </button>
+                </div>
+
+                <!-- Quick Samples to Test Instantly -->
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 10px 0 20px 0; font-size: 0.85rem;">
+                    <span style="opacity: 0.7; align-self: center;">Quick test:</span>
+                    <button type="button" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 20px;" onclick="trySampleBarcode('5449000000996')">Coca-Cola</button>
+                    <button type="button" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 20px;" onclick="trySampleBarcode('3017620422003')">Nutella</button>
+                    <button type="button" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 20px;" onclick="trySampleBarcode('8901491101837')">Lay's Classic</button>
+                    <button type="button" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 20px;" onclick="trySampleBarcode('8901058852393')">Maggi Noodles</button>
+                </div>
+
+                <!-- Camera and Scanner Options -->
+                <div class="camera-preview" id="cameraPreview" data-testid="camera-preview">
+                    <!-- Live HTML5 QR & Barcode Viewfinder -->
+                    <div id="qr-reader" style="width: 100%; max-width: 480px; margin: 0 auto 15px auto; border-radius: 14px; overflow: hidden; display: none;"></div>
+
+                    <!-- Scanner Controls -->
+                    <div id="scannerButtons" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;">
+                        <button id="btnStartLiveCamera" class="btn btn-primary" onclick="startLiveCameraScan()">
+                            <i class="fas fa-video"></i> Start Live Camera
+                        </button>
+                        <button id="btnStopLiveCamera" class="btn btn-danger" style="display: none; background: #e53935; color: white;" onclick="stopLiveCameraScan()">
+                            <i class="fas fa-stop"></i> Stop Camera
+                        </button>
+                        <button id="btnSwitchCamera" class="btn btn-outline" style="display: none;" onclick="switchCamera()">
+                            <i class="fas fa-sync-alt"></i> Flip Camera
+                        </button>
+                        <label class="btn btn-outline" style="cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-file-image"></i> Upload Packet Photo
+                            <input type="file" id="barcodeFileInput" accept="image/*" style="display: none;" onchange="handleBarcodeFileUpload(event)">
+                        </label>
+                        <button class="btn btn-outline" onclick="startDjangoCameraScan()">
+                            <i class="fas fa-camera"></i> OpenCV Server Scan
+                        </button>
+                    </div>
+
+                    <p id="scannerInstructions" style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dark); opacity: 0.8;">
+                        <i class="fas fa-info-circle"></i> Point camera steadily at the <strong>horizontal barcode lines</strong> on the packet. Supports EAN-13, UPC, Code-128 & QR codes.
+                    </p>
+
+                    <!-- Django Backend Camera Scan Status -->
+                    <div id="djangoScanStatus" style="display: none; margin-top: 20px; text-align: center;">
+                        <div class="spinner" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                        <p style="margin-top: 10px; font-weight: 500;">Scanning barcode via OpenCV camera...</p>
+                    </div>
+
+                    <div id="djangoScanResult" style="display: none; margin-top: 20px; padding: 15px; 
+                    background: var(--light-green); border-radius: 10px; text-align: left;">
+                        <p style="margin-bottom: 5px; font-weight: 500;">
+                            <i class="fas fa-barcode"></i> Scanned Barcode:
+                        </p>
+                        <p id="scannedBarcode"
+                            style="font-size: 1.2rem; font-weight: bold; color: var(--primary-green);">
+                            000000000000
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="scan-loading" id="scanLoading" data-testid="scan-loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing product...</p>
+                </div>
+
+                <!-- Scan Result -->
+                <div class="scan-result" id="scanResult" data-testid="scan-result">
+                    <div class="scan-result-header">
+                        <div class="product-info">
+                            <h3 id="productName">Product Name</h3>
+                            <p id="productBrand">Brand Name</p>
+                        </div>
+                        <div class="nutri-score">
+                            <span>Nutri-Score</span>
+                            <strong id="nutriScore">A</strong>
+                        </div>
+                    </div>
+                    <div class="nutrition-grid" id="nutritionGrid">
+                        <!-- Nutrition items will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- =====================================================
+         DIET SECTION
+    ===================================================== -->
+    <section class="section section-alt" id="diet" data-testid="diet-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Your Diet Plan</h2>
+                <p>Personalized meal suggestions based on your health profile</p>
+            </div>
+            <div class="diet-grid">
+                <div class="diet-card" data-testid="breakfast-card">
+                    <div class="diet-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h3>Breakfast</h3>
+                    <p>Start your day with energy-boosting meals tailored to your needs</p>
+                </div>
+                <div class="diet-card" data-testid="lunch-card">
+                    <div class="diet-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3>Lunch</h3>
+                    <p>Balanced midday meals to keep you productive and focused</p>
+                </div>
+                <div class="diet-card" data-testid="dinner-card">
+                    <div class="diet-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h3>Dinner</h3>
+                    <p>Light, nutritious evening meals for better rest and recovery</p>
+                </div>
+            </div>
+            <div class="diet-note">
+                <i class="fas fa-info-circle"></i>
+                <p>Personalized diet will be generated after health analysis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         ALTERNATIVES SECTION
+    ===================================================== -->
+    <section class="section" id="alternatives" data-testid="alternatives-section">
+        <div class="container">
+
+            <div class="section-title">
+                <h2>Healthier Alternatives</h2>
+                <p>Better food options recommended for your health condition</p>
+            </div>
+
+            <div class="alternatives-grid" id="alternativesGrid">
+                <!-- Dynamic alternatives will be injected here -->
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         DONATE SECTION
+    ===================================================== -->
+    <section class="section section-alt" id="donate" data-testid="donate-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Support Our Mission</h2>
+                <p>Help us make nutrition accessible to everyone</p>
+            </div>
+            <div class="donate-content">
+                <div class="donate-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+
+                <div class="ngo-grid" id="ngoGrid">
+                    <!-- NGO cards will load here -->
+                </div>
+                <!-- Line 669: Fix the broken button -->
+            </div>
+        </div>
+    </section>
+
+    <!-- DONATION POPUP -->
+    <div id="donationModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeDonationModal()">×</span>
+
+            <h2 id="ngoTitle">Donate Products</h2>
+
+            <form onsubmit="submitDonation(event)">
+                <label>Product Name</label>
+                <input id="productName" type="text" required>
+
+                <label>Quantity</label>
+                <input id="quantity" type="text" required>
+
+                <button type="submit">Submit Donation</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- =====================================================
+         PROFILE SECTION
+    ===================================================== -->
+    <section class="section" id="profile" data-testid="profile-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Your Profile</h2>
+                <p>Manage your health information</p>
+            </div>
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h3 id="profileName">Guest User</h3>
+                    <p class="email" id="profileEmail">guest@nutrihealth.com</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+    <footer class="footer" data-testid="footer">
+        <p>&copy; 2024 NutriHealth. Eat Smart. Live Better.</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact Us</a>
+        </div>
+    </footer>
+
+    <!-- =====================================================
+         LOGIN/SIGNUP MODAL
+    ===================================================== -->
+    <div class="modal-overlay" id="authModal" data-testid="auth-modal">
+        <div class="modal" style="position: relative;">
+            <div class="modal-close" data-testid="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-heade">
+                <h2>Welcome to NutriHealth</h2>
+                <p>Your journey to better health starts here</p>
+            </div>
+            <div class="modal-tab">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-testid="login-tab" onclick="switchTab('login')">Login</button>
+                    <button class="modal-tab" data-testid="signup-tab" onclick="switchTab('signup')">Sign Up</button>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="modal-form active" id="loginForm" data-testid="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    <input type="text" class="form-input" data-testid="login-username" id="loginUsername"
+                        placeholder="Enter your username">
+                    <p class="form-error" id="loginUsernameError">Username is required</p>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" class="form-input" data-testid="login-password" id="loginPassword"
+                        placeholder="Enter your password">
+                    <p class="form-error" id="loginPasswordError">Password is required</p>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit" data-testid="login-submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form class="modal-form" id="signupForm" data-testid="signup-form" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    <input type="text" class="form-input" data-testid="signup-username" id="signupUsername"
+                        placeholder="Choose a username">
+                    <p class="form-error" id="signupUsernameError">Username is required (min 3 characters)</p>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" class="form-input" data-testid="signup-email" id="signupEmail"
+                        placeholder="Enter your email">
+                    <p class="form-error" id="signupEmailError">Valid email is required</p>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" class="form-input" data-testid="signup-password" id="signupPassword"
+                        placeholder="Create a password">
+                    <p class="form-error" id="signupPasswordError">Password must be at least 6 characters</p>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit" data-testid="signup-submit">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+    <script>
+
+
+
+        /* ==========================
+   CSRF TOKEN
+========================== */
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                document.cookie.split(';').forEach(cookie => {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    }
+                });
+            }
+            return cookieValue;
+        }
+        /* =====================================================
+       REAL BARCODE SCAN (OpenFoodFacts)
+    ===================================================== */
+        async function scanProduct() {
+            const barcode = document.getElementById('barcodeInput').value.trim();
+            const loadingEl = document.getElementById('scanLoading');
+            const resultEl = document.getElementById('scanResult');
+
+            if (!barcode) {
+                alert('Please enter a barcode number');
+                return;
+            }
+
+            // UI loading
+            loadingEl.classList.add('active');
+            resultEl.classList.remove('active');
+
+            try {
+                const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+                const data = await res.json();
+
+                loadingEl.classList.remove('active');
+
+                if (data.status !== 1) {
+                    alert("Product not found in OpenFoodFacts database");
+                    return;
+                }
+
+                const p = data.product;
+
+                const product = {
+                    name: p.product_name || 'Unknown Product',
+                    brand: p.brands || 'N/A',
+                    nutriScore: (p.nutriscore_grade || 'N/A').toUpperCase(),
+                    nutrition: {
+                        calories: {
+                            value: p.nutriments?.energy_kcal_100g ?? 'N/A',
+                            icon: 'fa-fire'
+                        },
+                        protein: {
+                            value: p.nutriments?.proteins_100g ?? 'N/A',
+                            icon: 'fa-drumstick-bite'
+                        },
+                        carbs: {
+                            value: p.nutriments?.carbohydrates_100g ?? 'N/A',
+                            icon: 'fa-bread-slice'
+                        },
+                        fiber: {
+                            value: p.nutriments?.fiber_100g ?? 'N/A',
+                            icon: 'fa-leaf'
+                        },
+                        sugar: {
+                            value: p.nutriments?.sugars_100g ?? 'N/A',
+                            icon: 'fa-cube'
+                        },
+                        fat: {
+                            value: p.nutriments?.fat_100g ?? 'N/A',
+                            icon: 'fa-cheese'
+                        }
+                    }
+                };
+
+                displayProduct(product);
+
+            } catch (error) {
+                loadingEl.classList.remove('active');
+                alert("Error fetching product data");
+                console.error(error);
+            }
+        }
+        // =====================================================
+        // SIDEBAR FUNCTIONS
+        // =====================================================
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+            document.body.style.overflow = document.querySelector('.sidebar').classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeSidebar() {
+            document.querySelector('.sidebar').classList.remove('active');
+            document.querySelector('.sidebar-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // =====================================================
+        // MODAL FUNCTIONS
+        // =====================================================
+        function openModal(tab = 'login') {
+            document.getElementById('authModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            switchTab(tab);
+        }
+
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.body.style.overflow = '';
+            clearFormErrors();
+        }
+
+        function switchTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.modal-tab[data-testid=\"${tab}-tab\"]`).classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.modal-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(`${tab}Form`).classList.add('active');
+
+            clearFormErrors();
+        }
+
+        function clearFormErrors() {
+            document.querySelectorAll('.form-error').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('.form-input.error').forEach(i => i.classList.remove('error'));
+        }
+
+        // =====================================================
+        // FORM VALIDATION & HANDLERS
+        // =====================================================
+
+
+        async function handleSignup(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            const res = await fetch("/accounts/ajax-signup/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username,
+                    email,
+                    password
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                closeModal();
+                updateProfile(data.username, data.email);
+            } else {
+                alert(data.error || "Signup failed");
+            }
+        }
+
+        function showError(inputId, errorId) {
+            document.getElementById(inputId).classList.add('error');
+            document.getElementById(errorId).style.display = 'block';
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function updateProfile(name, email) {
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('profileEmail').textContent = email;
+        }
+
+        async function loadHealthSummary() {
+            const res = await fetch("/accounts/health-summary/");
+            const data = await res.json();
+
+            if (!data.exists) return;
+
+            document.getElementById("healthSummaryList").innerHTML = `
+        <li>${data.condition}</li>
+        <li>${data.allergies}</li>
+        <li>${data.diet}</li>
+    `;
+        }
+
+
+        // =====================================================
+        // HEALTH PROFILE FUNCTIONS
+        // =====================================================
+        let userHealthProfile = {};
+
+        async function saveHealthProfile() {
+
+            userHealthProfile = {
+                condition: document.getElementById('healthCondition').value || 'none',
+                allergies: document.getElementById('allergies').value || 'none',
+                diet: document.getElementById('dietPreference').value || ''
+            };
+
+            if (!userHealthProfile.diet) {
+                alert("Please select a diet preference");
+                return;
+            }
+
+            try {
+                const res = await fetch("/accounts/save-health-profile/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: JSON.stringify(userHealthProfile)
+                });
+
+                if (!res.ok) throw new Error("Server error");
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert("Health profile saved!");
+                    await loadDietPlan();   // 👈 generate diet
+                    scrollToSection('diet');
+                } else {
+                    alert(data.error || "Something went wrong");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Unable to save health profile");
+            }
+        }
+        async function loadDietPlan() {
+            const res = await fetch("/accounts/diet-plan/");
+            const data = await res.json();
+
+            if (!data.meals || data.meals.length < 3) {
+                alert("Diet plan not available");
+                return;
+            }
+
+            // Breakfast
+            document.querySelector('[data-testid="breakfast-card"] p').innerHTML = `
+        <strong>${data.meals[0].title}</strong><br>
+        Calories: ${data.meals[0].calories} kcal
+    `;
+
+            // Lunch
+            document.querySelector('[data-testid="lunch-card"] p').innerHTML = `
+        <strong>${data.meals[1].title}</strong><br>
+        Calories: ${data.meals[1].calories} kcal
+    `;
+
+            // Dinner
+            document.querySelector('[data-testid="dinner-card"] p').innerHTML = `
+        <strong>${data.meals[2].title}</strong><br>
+        Calories: ${data.meals[2].calories} kcal
+    `;
+
+            document.querySelector('.diet-note p').innerText =
+                "Personalized Indian diet generated dynamically based on your health profile";
+        }
+
+        function trySampleBarcode(code) {
+            document.getElementById('barcodeInput').value = code;
+            scanProduct();
+        }
+
+        /* =====================================================
+           SMART BARCODE SCAN
+        ===================================================== */
+        async function scanProduct() {
+            let barcode = document.getElementById('barcodeInput').value.trim();
+            const loadingEl = document.getElementById('scanLoading');
+            const resultEl = document.getElementById('scanResult');
+
+            if (!barcode) {
+                alert('Please enter a barcode number or scan a packet.');
+                return;
+            }
+
+            // Check if the input is a web URL (common in promotional / FSSAI QR codes on food packets)
+            if (barcode.startsWith('http://') || barcode.startsWith('https://')) {
+                try {
+                    const parsedUrl = new URL(barcode);
+                    const qParams = new URLSearchParams(parsedUrl.search);
+                    const extracted = qParams.get('barcode') || qParams.get('gtin') || qParams.get('ean') || qParams.get('code') || qParams.get('id');
+                    if (extracted) {
+                        barcode = extracted;
+                        document.getElementById('barcodeInput').value = barcode;
+                    } else {
+                        alert(`Note: The scanned code is a web link (${barcode}).\n\nPackaged food nutrition is identified by the 1D Barcode (parallel black lines, usually 13 digits like 890...). Please scan or enter the product's barcode.`);
+                    }
+                } catch (e) {
+                    // Not a valid URL string, continue with barcode
+                }
+            }
+
+            // Show loading
+            loadingEl.classList.add('active');
+            resultEl.classList.remove('active');
+
+            let product = null;
+
+            try {
+                // 1️⃣ Try OpenFoodFacts first
+                const resOFF = await fetch(`https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(barcode)}.json`);
+                const dataOFF = await resOFF.json();
+
+                if (dataOFF.status === 1) {
+                    const p = dataOFF.product;
+                    product = {
+                        barcode: barcode,
+                        name: p.product_name || p.product_name_en || 'Unknown Product',
+                        brand: p.brands || 'N/A',
+                        nutriScore: (p.nutriscore_grade || 'N/A').toUpperCase(),
+                        nutrition: {
+                            calories: { value: p.nutriments?.energy_kcal_100g ?? p.nutriments?.energy_100g ?? 'N/A', icon: 'fa-fire' },
+                            protein: { value: p.nutriments?.proteins_100g ?? 'N/A', icon: 'fa-drumstick-bite' },
+                            carbs: { value: p.nutriments?.carbohydrates_100g ?? 'N/A', icon: 'fa-bread-slice' },
+                            fiber: { value: p.nutriments?.fiber_100g ?? 'N/A', icon: 'fa-leaf' },
+                            sugar: { value: p.nutriments?.sugars_100g ?? 'N/A', icon: 'fa-cube' },
+                            fat: { value: p.nutriments?.fat_100g ?? 'N/A', icon: 'fa-cheese' }
+                        }
+                    };
+                } else {
+                    // 2️⃣ Fallback: Spoonacular API
+                    const SPOONACULAR_KEY = "c6d475535b7e424c9b801d00c7648c6d";
+                    try {
+                        const resSP = await fetch(`https://api.spoonacular.com/food/products/barcode/${encodeURIComponent(barcode)}?apiKey=${SPOONACULAR_KEY}`);
+                        const dataSP = await resSP.json();
+
+                        if (dataSP && dataSP.title) {
+                            product = {
+                                barcode: barcode,
+                                name: dataSP.title || 'Unknown Product',
+                                brand: dataSP.brand || 'N/A',
+                                nutriScore: dataSP.nutrition?.nutrients?.find(n => n.name === 'Nutri-Score')?.amount?.toUpperCase() || 'N/A',
+                                nutrition: {
+                                    calories: { value: dataSP.nutrition?.nutrients?.find(n => n.name === 'Calories')?.amount ?? 'N/A', icon: 'fa-fire' },
+                                    protein: { value: dataSP.nutrition?.nutrients?.find(n => n.name === 'Protein')?.amount ?? 'N/A', icon: 'fa-drumstick-bite' },
+                                    carbs: { value: dataSP.nutrition?.nutrients?.find(n => n.name === 'Carbohydrates')?.amount ?? 'N/A', icon: 'fa-bread-slice' },
+                                    fiber: { value: dataSP.nutrition?.nutrients?.find(n => n.name === 'Fiber')?.amount ?? 'N/A', icon: 'fa-leaf' },
+                                    sugar: { value: dataSP.nutrition?.nutrients?.find(n => n.name === 'Sugar')?.amount ?? 'N/A', icon: 'fa-cube' },
+                                    fat: { value: dataSP.nutrition?.nutrients?.find(n => n.name === 'Fat')?.amount ?? 'N/A', icon: 'fa-cheese' }
+                                }
+                            };
+                        }
+                    } catch (spErr) {
+                        console.warn("Spoonacular lookup failed:", spErr);
+                    }
+
+                    if (!product) {
+                        alert(`Product with code "${barcode}" was not found in the OpenFoodFacts database.\n\nTip: You can try one of the sample products above (like Coca-Cola or Nutella) or check if the full 13 digits were entered.`);
+                        loadingEl.classList.remove('active');
+                        return;
+                    }
+                }
+
+                // Display product
+                displayProduct(product);
+                fetchAlternatives(product);
+
+                // Save to backend
+                await saveScannedProductToBackend(product);
+
+            } catch (err) {
+                console.error("Scan error:", err);
+                alert("Error fetching product data: " + err.message);
+            } finally {
+                loadingEl.classList.remove('active');
+            }
+        }
+
+        /* =====================================================
+           DISPLAY SCANNED PRODUCT & SAVE TO BACKEND
+        ===================================================== */
+        async function saveScannedProductToBackend(product) {
+            try {
+                const res = await fetch("/accounts/ajax-save-product/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    console.log("Product saved to backend:", data.product_id);
+                } else {
+                    console.error("Error saving product:", data.error);
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+            }
+        }
+
+        function displayProduct(product) {
+            const resultEl = document.getElementById('scanResult');
+
+            // Update basic info
+            document.getElementById('productName').textContent = product.name;
+            document.getElementById('productBrand').textContent = product.brand;
+
+            const scoreEl = document.getElementById('nutriScore');
+            const score = (product.nutriScore || 'N/A').toUpperCase();
+            scoreEl.textContent = score;
+
+            // Set Nutri-Score color
+            const scoreColors = {
+                'A': '#2E7D32',
+                'B': '#66BB6A',
+                'C': '#FFC107',
+                'D': '#FF9800',
+                'E': '#F44336'
+            };
+            scoreEl.style.color = scoreColors[score] || '#2E7D32';
+
+            // Build nutrition grid
+            const gridEl = document.getElementById('nutritionGrid');
+            gridEl.innerHTML = Object.entries(product.nutrition).map(([key, data]) => `
+        <div class="nutrition-item">
+            <i class="fas ${data.icon}"></i>
+            <h4>${data.value}</h4>
+            <p>${key.charAt(0).toUpperCase() + key.slice(1)}</p>
+        </div>
+    `).join('');
+
+            // Show result section
+            resultEl.classList.add('active');
+
+            // Save product to backend
+            saveScannedProductToBackend(product);
+
+            fetchAlternatives(product);
+        }
+
+
+        // =====================================================
+        // UTILITY FUNCTIONS
+        // =====================================================
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const ngos = [
+            { name: "Food For All", desc: "Accepts product donations" },
+            { name: "Helping Hands", desc: "Supports poor families" },
+            { name: "Hunger Free", desc: "Food distribution NGO" }
+        ];
+
+        function openDonateModal() {
+            const grid = document.getElementById("ngoGrid");
+            grid.innerHTML = "";
+
+            ngos.forEach(ngo => {
+                const card = document.createElement("div");
+                card.className = "ngo-card";
+
+                card.innerHTML = `
+            <h3>${ngo.name}</h3>
+            <p>${ngo.desc}</p>
+            <button onclick="openDonationForm('${ngo.name}')">
+                Donate
+            </button>
+        `;
+
+                grid.appendChild(card);
+            });
+        }
+
+function openDonationForm(ngoName) {
+    const modal = document.getElementById("donationModal");
+    const title = document.getElementById("ngoTitle");
+
+    title.innerText = "Donate Products to " + ngoName;
+    modal.classList.add("active");
+}
+
+
+        function closeDonationModal() {
+            const modal = document.getElementById("donationModal");
+            modal.classList.remove("active");
+        }
+
+
+        function submitDonation(e) {
+            e.preventDefault();
+
+            const product = document.getElementById("productName").value;
+            const qty = document.getElementById("quantity").value;
+
+            alert(`Thank you! ${qty} ${product} will be donated.`);
+
+            closeDonationModal();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const grid = document.getElementById("ngoGrid");
+
+            ngos.forEach(ngo => {
+                const card = document.createElement("div");
+                card.className = "ngo-card";
+
+                card.innerHTML = `
+            <div class="ngo-icon">
+                <i class="fas fa-hand-holding-heart"></i>
+            </div>
+            <h3>${ngo.name}</h3>
+            <p>${ngo.desc}</p>
+            <button onclick="openDonationForm('${ngo.name}')">
+                Donate Products
+            </button>
+        `;
+
+                grid.appendChild(card);
+            });
+        });
+
+        function handleLogout() {
+            alert('You have been logged out.');
+            document.getElementById('profileName').textContent = 'Guest User';
+            document.getElementById('profileEmail').textContent = 'guest@nutrihealth.com';
+            closeSidebar();
+        }
+
+        // =====================================================
+        // SCROLL ANIMATIONS
+        // =====================================================
+        function handleScrollAnimations() {
+            const sections = document.querySelectorAll('.section');
+            const header = document.querySelector('.header');
+
+            // Header scroll effect
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Section fade-in
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const triggerPoint = window.innerHeight * 0.85;
+
+                if (rect.top < triggerPoint) {
+                    section.classList.add('visible');
+                }
+            });
+        }
+
+        // =====================================================
+        // EVENT LISTENERS
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial animation check
+            handleScrollAnimations();
+
+            // Close modal on overlay click
+            document.getElementById('authModal').addEventListener('click', (e) => {
+                if (e.target.id === 'authModal') {
+                    closeModal();
+                }
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Scroll event listener
+        window.addEventListener('scroll', handleScrollAnimations);
+
+        // Prevent scroll when modal is open
+        window.addEventListener('wheel', (e) => {
+            if (document.getElementById('authModal').classList.contains('active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+
+        /* ==========================
+           LOGIN
+        ========================== */
+async function handleLogin(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const res = await fetch("/accounts/ajax-login/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")   // important
+        },
+        credentials: "same-origin",   // important for Django session
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        closeModal();
+        loadProfile();   // refresh profile
+    } else {
+        alert(data.error || "Login failed");
+    }
+}
+
+
+        /* ==========================
+           SIGNUP
+        ========================== */
+        async function handleSignup(e) {
+            e.preventDefault();
+
+            const username = document.getElementById("signupUsername").value;
+            const email = document.getElementById("signupEmail").value;
+            const password = document.getElementById("signupPassword").value;
+
+            const res = await fetch("/accounts/ajax-signup/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                closeModal();
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const res = await fetch("/get-profile/", {
+                    method: "GET",
+                    credentials: "same-origin"   // IMPORTANT for login session
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Update profile section
+                    document.getElementById("profileName").textContent = data.username;
+                    document.getElementById("profileEmail").textContent = data.email;
+                }
+            } catch (err) {
+                console.log("User not logged in or error loading profile");
+            }
+        }
+
+        // Run when page loads
+        window.onload = loadProfile;
+
+        /* =====================================================
+           LIVE BROWSER CAMERA SCANNER (1D BARCODE & QR)
+        ===================================================== */
+        let html5QrScanner = null;
+        let currentFacingMode = "environment"; // Rear camera preferred on mobile
+
+        async function startLiveCameraScan() {
+            const qrReaderEl = document.getElementById("qr-reader");
+            const btnStart = document.getElementById("btnStartLiveCamera");
+            const btnStop = document.getElementById("btnStopLiveCamera");
+            const btnSwitch = document.getElementById("btnSwitchCamera");
+            const instructions = document.getElementById("scannerInstructions");
+
+            if (!qrReaderEl) {
+                alert("Scanner container not found.");
+                return;
+            }
+
+            // Stop any existing instance
+            if (html5QrScanner) {
+                try {
+                    await html5QrScanner.stop();
+                } catch (e) {
+                    // Ignore
+                }
+            }
+
+            qrReaderEl.style.display = "block";
+            btnStart.style.display = "none";
+            btnStop.style.display = "inline-flex";
+            btnSwitch.style.display = "inline-flex";
+            instructions.innerHTML = '<i class="fas fa-video"></i> Camera active. Align packet barcode lines within the box...';
+
+            try {
+                // Configure all 1D barcode and QR formats
+                const formatsToSupport = [
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.DATA_MATRIX
+                ];
+
+                html5QrScanner = new Html5Qrcode("qr-reader", {
+                    formatsToSupport: formatsToSupport,
+                    verbose: false
+                });
+
+                const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+                    const w = Math.floor(Math.min(viewfinderWidth * 0.85, 340));
+                    const h = Math.floor(Math.min(viewfinderHeight * 0.55, 180));
+                    return { width: w, height: h };
+                };
+
+                const config = {
+                    fps: 15,
+                    qrbox: qrboxFunction,
+                    aspectRatio: 1.333333,
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true
+                    }
+                };
+
+                await html5QrScanner.start(
+                    { facingMode: currentFacingMode },
+                    config,
+                    async (decodedText, decodedResult) => {
+                        console.log("Scanned code:", decodedText, decodedResult);
+                        await stopLiveCameraScan();
+                        document.getElementById('barcodeInput').value = decodedText.trim();
+                        
+                        // Audio beep feedback
+                        try {
+                            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                            const osc = ctx.createOscillator();
+                            osc.type = "sine";
+                            osc.frequency.setValueAtTime(800, ctx.currentTime);
+                            osc.connect(ctx.destination);
+                            osc.start();
+                            osc.stop(ctx.currentTime + 0.15);
+                        } catch (audioErr) {}
+
+                        await scanProduct();
+                    },
+                    (errorMessage) => {
+                        // Ongoing frame scan without detection
+                    }
+                );
+            } catch (err) {
+                console.error("Camera start failed:", err);
+                qrReaderEl.style.display = "none";
+                btnStart.style.display = "inline-flex";
+                btnStop.style.display = "none";
+                btnSwitch.style.display = "none";
+                instructions.innerHTML = `<span style="color:#e53935;"><i class="fas fa-exclamation-triangle"></i> Camera error: ${err.message || 'Permission denied or no camera found'}. Use image upload or manual barcode.</span>`;
+                alert("Camera error: " + (err.message || "Could not access camera. Please allow camera permissions in your browser."));
+            }
+        }
+
+        async function stopLiveCameraScan() {
+            const qrReaderEl = document.getElementById("qr-reader");
+            const btnStart = document.getElementById("btnStartLiveCamera");
+            const btnStop = document.getElementById("btnStopLiveCamera");
+            const btnSwitch = document.getElementById("btnSwitchCamera");
+            const instructions = document.getElementById("scannerInstructions");
+
+            if (html5QrScanner) {
+                try {
+                    await html5QrScanner.stop();
+                    html5QrScanner.clear();
+                } catch (e) {
+                    console.warn("Error stopping scanner:", e);
+                }
+                html5QrScanner = null;
+            }
+
+            if (qrReaderEl) qrReaderEl.style.display = "none";
+            if (btnStart) btnStart.style.display = "inline-flex";
+            if (btnStop) btnStop.style.display = "none";
+            if (btnSwitch) btnSwitch.style.display = "none";
+            if (instructions) instructions.innerHTML = '<i class="fas fa-info-circle"></i> Point camera steadily at the <strong>horizontal barcode lines</strong> on the packet. Supports EAN-13, UPC, Code-128 & QR codes.';
+        }
+
+        async function switchCamera() {
+            currentFacingMode = (currentFacingMode === "environment") ? "user" : "environment";
+            await stopLiveCameraScan();
+            await startLiveCameraScan();
+        }
+
+        // Upload a photo of a barcode / packet
+        async function handleBarcodeFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const instructions = document.getElementById("scannerInstructions");
+            instructions.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reading packet image...';
+
+            try {
+                const scanner = new Html5Qrcode("qr-reader", {
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.CODE_39,
+                        Html5QrcodeSupportedFormats.QR_CODE
+                    ],
+                    verbose: false
+                });
+
+                const decodedText = await scanner.scanFile(file, /* showImage= */ false);
+                console.log("Decoded from file:", decodedText);
+                document.getElementById('barcodeInput').value = decodedText.trim();
+                instructions.innerHTML = `<span style="color:var(--primary-green);"><i class="fas fa-check-circle"></i> Barcode found: <strong>${decodedText}</strong></span>`;
+                await scanProduct();
+            } catch (err) {
+                console.error("Image decode error:", err);
+                instructions.innerHTML = '<span style="color:#e53935;"><i class="fas fa-times-circle"></i> No clear barcode found in image. Please ensure good lighting and sharp focus.</span>';
+                alert("Could not detect a clear barcode in this photo. Make sure the barcode lines are sharp, in focus, and not reflecting glare.");
+            } finally {
+                event.target.value = "";
+            }
+        }
+
+        //alternative js ui
+        async function fetchAlternatives(product) {
+            try {
+                const res = await fetch("/accounts/ajax-alternatives/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                const data = await res.json();
+
+                if (!data.harmful) return;
+
+                const grid = document.getElementById("alternativesGrid");
+                grid.innerHTML = "";
+
+                data.alternatives.forEach(item => {
+                    const card = document.createElement("div");
+                    card.className = "alternative-card";
+
+                    card.innerHTML = `
+    <div class="alternative-icon">
+        <i class="fas fa-apple-alt"></i>
+    </div>
+    <h4>${item.name}</h4>
+    <p>Brand: ${item.brand}</p>
+    <p>NutriScore: ${item.nutriscore}</p>
+`;
+
+                    grid.appendChild(card);
+                });
+
+                document.getElementById("alternatives").scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderAlternatives(data) {
+            const grid = document.getElementById("alternativesGrid");
+            grid.innerHTML = "";
+
+            if (!data.is_harmful) {
+                grid.innerHTML = `
+            <div class="safe-message">
+                ✅ This product is safe for your health
+            </div>`;
+                return;
+            }
+
+            data.alternatives.forEach(item => {
+                grid.innerHTML += `
+        <div class="alternative-card">
+            <img src="${item.image || '/static/no-food.png'}" alt="food">
+            <h4>${item.name}</h4>
+            <p><strong>Brand:</strong> ${item.brand || "N/A"}</p>
+            <p>NutriScore: <strong>${item.nutriScore?.toUpperCase()}</strong></p>
+            <p>Sugar: ${item.sugar}g | Fat: ${item.fat}g</p>
+        </div>
+        `;
+            });
+
+            document.getElementById("alternatives").scrollIntoView({ behavior: "smooth" });
+        }
+
+        /* =====================================================
+           DJANGO BACKEND CAMERA SCAN FUNCTION
+        ===================================================== */
+        async function startDjangoCameraScan() {
+            const statusEl = document.getElementById('djangoScanStatus');
+            const resultEl = document.getElementById('djangoScanResult');
+            const scannedBarcodeEl = document.getElementById('scannedBarcode');
+            const barcodeInput = document.getElementById('barcodeInput');
+
+            // Show scanning status
+            if (statusEl) statusEl.style.display = 'block';
+            if (resultEl) resultEl.style.display = 'none';
+
+            try {
+                console.log('Starting Django backend camera scan...');
+
+                const response = await fetch('/scan/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+
+                const djangoData = await response.json();
+                console.log('Django scan response:', djangoData);
+
+                if (statusEl) statusEl.style.display = 'none';
+
+                if (djangoData.barcode) {
+                    barcodeInput.value = djangoData.barcode;
+                    if (scannedBarcodeEl) scannedBarcodeEl.textContent = djangoData.barcode;
+                    if (resultEl) resultEl.style.display = 'block';
+
+                    if (djangoData.product_name) {
+                        const product = {
+                            barcode: djangoData.barcode,
+                            name: djangoData.product_name,
+                            brand: djangoData.brand || 'N/A',
+                            nutriScore: (djangoData.nutriscore || 'N/A').toUpperCase(),
+                            nutrition: {
+                                calories: { value: djangoData.nutrition?.calories ?? 'N/A', icon: 'fa-fire' },
+                                protein: { value: djangoData.nutrition?.protein ?? 'N/A', icon: 'fa-drumstick-bite' },
+                                carbs: { value: djangoData.nutrition?.carbs ?? 'N/A', icon: 'fa-bread-slice' },
+                                fiber: { value: djangoData.nutrition?.fiber ?? 'N/A', icon: 'fa-leaf' },
+                                sugar: { value: djangoData.nutrition?.sugar ?? 'N/A', icon: 'fa-cube' },
+                                fat: { value: djangoData.nutrition?.fat ?? 'N/A', icon: 'fa-cheese' }
+                            }
+                        };
+                        displayProduct(product);
+                        fetchAlternatives(product);
+                        saveScannedProductToBackend(product);
+                    } else {
+                        scanProduct();
+                    }
+                } else if (djangoData.message || djangoData.error) {
+                    alert(djangoData.message || djangoData.error);
+                } else {
+                    alert('No barcode detected by OpenCV camera.');
+                }
+
+            } catch (error) {
+                console.error('Django scan error:', error);
+                if (statusEl) statusEl.style.display = 'none';
+                alert('Server camera scan error: ' + error.message + '\n\nTip: Use the Live Browser Camera above.');
+            }
+        }
+    </script>
+
+</body>
+
+</html>
